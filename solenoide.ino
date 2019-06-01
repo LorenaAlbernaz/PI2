@@ -35,5 +35,5 @@ void loop() {
    digitalWrite(valvula,HIGH);
    delay(1000);
   }
-  delay(3000); // Aguarda 3s para verificar se solo está umido novamente
+  delay(3000); // Aguarda 3s para verificar novamente
 }
