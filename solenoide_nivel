@@ -1,0 +1,26 @@
+int pinoRele = 19; //PINO DIGITAL UTILIZADO PELO MÓDULO RELÉ
+int pinoBotao = 23; //PINO DIGITAL sensor de nivel
+int statusSolen = 0; //VARIÁVEL QUE CONTROLA O ESTADO DO MÓDULO RELÉ (LIGADO / DESLIGADO)
+ 
+void setup(){
+  pinMode(pinoRele, OUTPUT); //DEFINE O PINO COMO SAÍDA
+  pinMode(pinoBotao, INPUT_PULLUP); //DEFINE O PINO COMO ENTRADA / "_PULLUP" É PARA ATIVAR O RESISTOR INTERNO
+  // PARA GARANTIR QUE NÃO EXISTA FLUTUAÇÃO ENTRE 0 (LOW) E 1 (HIGH)
+  digitalWrite(pinoRele, HIGH); //MÓDULO RELÉ INICIA DESLIGADO
+}    
+
+void loop(){
+ if((digitalRead(pinoBotao) == LOW) && (statusSolen == 0)){ //SE A LEITURA DO PINO FOR IGUAL A LOW E
+    //VARIÁVEL statusSolen FOR IGUAL A 0, FAZ
+        digitalWrite(pinoRele, LOW); //LIGA O MÓDULO RELÉ 
+        statusSolen = 1; //VARIÁVEL RECEBE O VALOR 1
+        delay(200); //INTERVALO DE 200 MILISSEGUNDOS
+ }else{//SENÃO, FAZ
+      if((digitalRead(pinoBotao) == LOW) && (statusSolen == 1)){ //SE A LEITURA DO PINO FOR IGUAL A LOW E
+       //VARIÁVEL statusSolen FOR IGUAL A 1, FAZ
+            digitalWrite(pinoRele, HIGH); //DESLIGA O MÓDULO RELÉ
+            statusSolen = 0; //VARIÁVEL RECEBE O VALOR 0
+            delay(200); //INTERVALO DE 200 MILISSEGUNDOS
+        }
+  }
+}
