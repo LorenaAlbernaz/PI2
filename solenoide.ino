@@ -1,10 +1,3 @@
-/**
- * Authorization.ino
- *
- *  Created on: 09.12.2015
- *
- */
-
 #include <Arduino.h>
 
 #include <WiFi.h>
