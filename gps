@@ -1,0 +1,159 @@
+#include <SD.h>
+
+const int chipSelect = 10;
+//SoftwareSerial Serial2(5,4); // RX, TX
+int ind = 0;
+char temp = 0;
+String dataString = "";
+int ind2=6;
+String fix ="$GPGGA,224006.00,2312.25442,S,04553.09096,W,1,04,7.63,591.8,M,-5.8,M,,*44";
+
+
+void setup()
+{
+// Open serial communications and wait for port to open:
+Serial.begin(57600);
+//while (!Serial) {
+//; // wait for serial port to connect. Needed for Leonardo only
+//}
+
+Serial.println("Goodnight moon!"); // testando comunicacao com arduino
+Serial.println(fix.length());
+// set the data rate for the SoftwareSerial port
+Serial2.begin(9600); // reset SoftwareSerial baudrate
+Serial2.flush();
+
+  delay(150);
+  
+
+
+  //Serial2.println("$PUBX,41,1,0007,0003,9600,0*1C\r\n");
+ //1 habilia
+ //0 desabilita
+  
+  configura("PUBX,40,GGA,0,0,0,0");
+  configura("PUBX,40,GLL,0,1,0,0");
+  configura("PUBX,40,GSA,0,0,0,0");
+  configura("PUBX,40,RMC,0,0,0,0");
+  configura("PUBX,40,GSV,0,0,0,0");
+  configura("PUBX,40,VTG,0,0,0,0");
+  //configura("PUBX,41,1,0007,0003,9600");
+  //Serial2.begin(9600); // reset SoftwareSerial baudrate
+Serial2.flush();
+
+pinMode(10, OUTPUT);
+while (!SD.begin(chipSelect)) {}
+while (!Serial2) {}
+gps();
+
+}
+
+void loop() // run over and over
+{
+  gps();
+  File dataFile = SD.open("gps_log.txt", FILE_WRITE);
+   if(dataFile)
+   {
+     gps();
+     dataFile.print(dataString);
+     dataFile.close();
+   }
+ }
+
+void gps() // run over and over
+{
+  temp = 0;
+  
+  //if((dataString.length() > 20))
+  //{
+  //String teste = dataString;
+  //  delay(10);
+  //  if((teste != NULL))
+  //  {
+  //    //Serial.print(teste);
+  //    busca(teste);
+  //  }
+  //  teste = "";
+  //}
+  //if(dataString.length() > 65)
+  //{
+  //  Serial.print("\n");
+  //}
+  dataString = "";
+  
+  while(Serial2.available())
+  {
+    temp = Serial2.read();
+    Serial.print(temp);
+    dataString += String(temp);
+  
+  //Serial.println((String(dataString)).endsWith(",W,"));
+  //if(dataString.endsWith(",V,"))
+    if(temp == ',')
+    {
+      ind++;
+      //Serial.print(ind);
+      if(ind > 4)
+      {
+        ind = 0;
+        //Serial.print(dataString);
+        //break;
+      }
+    }
+  }
+  String teste = dataString;
+  busca(teste);
+  teste = "";
+}
+
+void busca(String teste)
+{
+    int v1 = teste.indexOf(',');
+    int v2 = teste.indexOf(',', (v1+1));
+    int v3 = teste.indexOf(',', (v2+1));
+    int v4 = teste.indexOf(',', (v3+1));
+    int v5 = teste.indexOf(',', (v4+1));
+    int v6 = teste.indexOf(',', (v5+1));
+    int v7 = teste.indexOf(',', (v6+1));
+    int v8 = teste.indexOf(',', (v7+1));
+    int v9 = teste.indexOf(',', (v8+1));
+    int v10 = teste.indexOf(',', (v9+1));
+    int v11 = teste.indexOf(',', (v10+1));
+    int v12 = teste.indexOf(',', (v11+1));
+    int v13 = teste.indexOf(',', (v12+1));
+    int v14 = teste.indexOf(',', (v13+1));
+    int v15 = teste.indexOf(',', (v14+1));
+
+//    Serial.print(teste.substring(v1+1, v2));
+//    Serial.print("\t");    
+//    Serial.print(teste.substring(v2+1, v3));
+//    Serial.println(teste.substring(v3+1, v4));
+//    Serial.print(teste.substring(v4+1, v5));
+//    Serial.println(teste.substring(v5+1, v6));
+//    (teste.substring(v6+1, v7));
+//    (teste.substring(v7+1, v8));
+//    (teste.substring(v8+1, v9));
+//    (teste.substring(v9+1, v10));
+//    (teste.substring(v10+1, v11));
+//    (teste.substring(v10+1, v12));
+//    (teste.substring(v11+1, v13));
+//    (teste.substring(v12+1, v14));
+//    (teste.substring(v13+1, v15));
+    
+}
+
+void configura(const char *msg)
+{
+     // test string
+  //const char *msg = "PUBX,40,GSV,0,20,0,0";
+  
+  // find checksum
+  int checksum = 0;
+  for (int i = 0; msg[i]; i++)
+    checksum ^= (unsigned char)msg[i];
+    // send to module
+  Serial2.print("$");
+  Serial2.print(msg);
+  Serial2.println(checksum,HEX);
+  delay(150);
+}
