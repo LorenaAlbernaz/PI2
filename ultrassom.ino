@@ -3,8 +3,8 @@
 
 
 //pinos para o ultrassom da frente do carrinho
-const uint8_t trig_pin = 4;
-const uint8_t echo_pin = 5;
+const uint8_t trig_pin = 22;
+const uint8_t echo_pin = 23;
 
 uint32_t print_timer;
 
